@@ -31,39 +31,72 @@ export const detectPDFFields = async (file) => {
       { pattern: /^[A-Z][a-z]+\s+[A-Z][a-z]+:$/, field: 'custom' }, // Matches "Field Name:" patterns
     ]
     
-    // Process each page
-    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-      const page = await pdf.getPage(pageNum)
-      const textContent = await page.getTextContent()
+    // First, try to detect actual PDF form fields
+    try {
+      const { PDFDocument } = await import('pdf-lib')
+      const pdfDoc = await PDFDocument.load(arrayBuffer)
+      const form = pdfDoc.getForm()
+      const formFields = form.getFields()
       
-      // Get page dimensions
-      const viewport = page.getViewport({ scale: 1.0 })
+      console.log('Found PDF form fields:', formFields.length)
       
-      textContent.items.forEach((item) => {
-        const text = item.str.trim()
-        if (!text) return
+      formFields.forEach((field, index) => {
+        const fieldName = field.getName()
+        const fieldType = field.constructor.name
+        console.log(`Form field ${index}: ${fieldName} (${fieldType})`)
         
-        // Check if text matches any field pattern
-        for (const { pattern, field } of fieldPatterns) {
-          if (pattern.test(text)) {
-            const fieldName = text.replace(/[:.]$/, '').toLowerCase()
-            fields.push({
-              field: field === 'custom' ? fieldName : field,
-              originalText: text,
-              page: pageNum,
-              x: item.transform[4],
-              y: item.transform[5],
-              width: item.width,
-              height: item.height,
-              pageWidth: viewport.width,
-              pageHeight: viewport.height
-            })
-            break
-          }
-        }
+        fields.push({
+          field: fieldName.toLowerCase(),
+          originalText: fieldName,
+          page: 1, // Most forms are single page
+          isFormField: true,
+          fieldType: fieldType
+        })
       })
+    } catch (formError) {
+      console.log('No interactive form fields found, falling back to text detection')
     }
     
+    // If no form fields found, detect text patterns
+    if (fields.length === 0) {
+      console.log('Detecting text patterns in PDF...')
+      
+      // Process each page
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum)
+        const textContent = await page.getTextContent()
+        
+        // Get page dimensions
+        const viewport = page.getViewport({ scale: 1.0 })
+        
+        textContent.items.forEach((item) => {
+          const text = item.str.trim()
+          if (!text) return
+          
+          // Check if text matches any field pattern
+          for (const { pattern, field } of fieldPatterns) {
+            if (pattern.test(text)) {
+              const fieldName = text.replace(/[:.]$/, '').toLowerCase()
+              fields.push({
+                field: field === 'custom' ? fieldName : field,
+                originalText: text,
+                page: pageNum,
+                x: item.transform[4],
+                y: item.transform[5],
+                width: item.width,
+                height: item.height,
+                pageWidth: viewport.width,
+                pageHeight: viewport.height,
+                isFormField: false
+              })
+              break
+            }
+          }
+        })
+      }
+    }
+    
+    console.log('Total fields detected:', fields.length)
     return fields
   } catch (error) {
     console.error('Error detecting PDF fields:', error)
@@ -73,7 +106,7 @@ export const detectPDFFields = async (file) => {
 
 export const fillPDFWithData = async (file, profileData) => {
   try {
-    const { PDFDocument } = await import('pdf-lib')
+    const { PDFDocument, rgb, StandardFonts } = await import('pdf-lib')
     
     const arrayBuffer = await file.arrayBuffer()
     const pdfDoc = await PDFDocument.load(arrayBuffer)
@@ -135,68 +168,54 @@ export const fillPDFWithData = async (file, profileData) => {
       }
     })
     
+    // If no form fields were filled, create a new PDF with data overlaid
+    if (filledFields === 0) {
+      console.log('No form fields found, creating new PDF with data overlay...')
+      
+      const pages = pdfDoc.getPages()
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
+      
+      // Try to overlay data on the first page
+      if (pages.length > 0) {
+        const page = pages[0]
+        const { width, height } = page.getSize()
+        
+        // Define positions for common fields (you can adjust these)
+        const fieldPositions = [
+          { key: 'name', x: 150, y: height - 150 },
+          { key: 'email', x: 150, y: height - 180 },
+          { key: 'phone', x: 150, y: height - 210 },
+          { key: 'address', x: 150, y: height - 240 },
+          { key: 'age', x: 150, y: height - 270 },
+          { key: 'education', x: 150, y: height - 300 },
+          { key: 'experience', x: 150, y: height - 330 },
+          { key: 'skills', x: 150, y: height - 360 },
+          { key: 'goals', x: 150, y: height - 390 },
+          { key: 'interests', x: 150, y: height - 420 }
+        ]
+        
+        fieldPositions.forEach(({ key, x, y }) => {
+          const value = fieldMapping[key]
+          if (value && y > 50) { // Make sure we don't go off the page
+            page.drawText(value, {
+              x,
+              y,
+              size: 12,
+              font,
+              color: rgb(0, 0, 0)
+            })
+            filledFields++
+            console.log(`Overlaid "${key}" with "${value}" at position (${x}, ${y})`)
+          }
+        })
+      }
+    }
+    
     console.log(`Successfully filled ${filledFields} fields`)
     return { pdfDoc, filledFields }
     
   } catch (error) {
     console.error('Error filling PDF:', error)
     throw new Error('Failed to fill PDF form')
-  }
-}
-
-export const createSamplePDF = async () => {
-  try {
-    const { PDFDocument, rgb, StandardFonts } = await import('pdf-lib')
-    
-    const pdfDoc = await PDFDocument.create()
-    const page = pdfDoc.addPage([612, 792]) // US Letter size
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
-    const fontSize = 12
-    
-    // Add title
-    page.drawText('Sample Application Form', {
-      x: 50,
-      y: 750,
-      size: 18,
-      font,
-      color: rgb(0, 0, 0)
-    })
-    
-    // Add form fields
-    const fields = [
-      { label: 'Name:', y: 700 },
-      { label: 'Email:', y: 670 },
-      { label: 'Phone:', y: 640 },
-      { label: 'Address:', y: 610 },
-      { label: 'Age:', y: 580 },
-      { label: 'Education:', y: 550 },
-      { label: 'Experience:', y: 520 },
-      { label: 'Skills:', y: 490 },
-      { label: 'Goals:', y: 460 },
-      { label: 'Interests:', y: 430 }
-    ]
-    
-    fields.forEach(({ label, y }) => {
-      page.drawText(label, {
-        x: 50,
-        y,
-        size: fontSize,
-        font,
-        color: rgb(0, 0, 0)
-      })
-      
-      // Draw underline for input field
-      page.drawLine({
-        start: { x: 120, y: y - 5 },
-        end: { x: 400, y: y - 5 },
-        thickness: 1,
-        color: rgb(0, 0, 0)
-      })
-    })
-    
-    return await pdfDoc.save()
-  } catch (error) {
-    console.error('Error creating sample PDF:', error)
-    throw new Error('Failed to create sample PDF')
   }
 } 

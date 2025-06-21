@@ -33,24 +33,15 @@ Best regards,
           <span className="text-white text-xl">📝</span>
         </div>
         <div>
-          <h3 className="text-xl font-bold text-gray-900">
-            Form Text
-          </h3>
-          <p className="text-gray-600 text-sm">
-            Paste your form with placeholders (like ___) to be filled
-          </p>
+          <h3 className="text-xl font-bold text-gray-900">Form Text</h3>
+          <p className="text-gray-600 text-sm">Paste your form with placeholders (like ___) to be filled</p>
         </div>
       </div>
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <label className="block text-sm font-semibold text-gray-700">
-            Form Content
-          </label>
-          <button
-            onClick={handleLoadExample}
-            className="modern-button bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 py-2 px-4 text-sm font-medium hover:from-gray-200 hover:to-gray-300 inverted-hover"
-          >
+          <label className="block text-sm font-semibold text-gray-700">Form Content</label>
+          <button onClick={handleLoadExample} className="modern-button bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 py-2 px-4 text-sm font-medium hover:from-gray-200 hover:to-gray-300 inverted-hover">
             📋 Load Example
           </button>
         </div>
@@ -70,12 +61,8 @@ Best regards,
             <span className="text-white text-xs">✨</span>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-900 mb-1">
-              Smart Placeholders
-            </p>
-            <p className="text-sm text-gray-600">
-              Use <code className="bg-white px-1 py-0.5 rounded text-xs">___</code> or <code className="bg-white px-1 py-0.5 rounded text-xs">[field]</code> as placeholders. The AI will intelligently match them with your profile data.
-            </p>
+            <p className="text-sm font-medium text-gray-900 mb-1">Smart Placeholders</p>
+            <p className="text-sm text-gray-600">Use <code className="bg-white px-1 py-0.5 rounded text-xs">___</code> or <code className="bg-white px-1 py-0.5 rounded text-xs">[field]</code> as placeholders. The AI will intelligently match them with your profile data.</p>
           </div>
         </div>
       </div>

@@ -1,12 +1,14 @@
 # 🤖 AutoForm - AI-Powered Form Filler
 
-AutoForm is a React application that uses Google Gemini Pro API to intelligently fill out text-based forms using user profile data. Simply input your personal information, paste a form with placeholders, and let AI do the rest!
+AutoForm is a React application that uses OpenRouter AI to intelligently fill out text-based forms and PDFs using user profile data. Simply input your personal information, paste a form with placeholders, and let AI do the rest!
 
 ## ✨ Features
 
-- **Smart Form Filling**: Uses Google Gemini Pro AI to intelligently fill forms based on your profile
-- **User-Friendly Interface**: Clean, modern UI with Tailwind CSS
-- **Profile Management**: Comprehensive profile form with personal details, experience, skills, and goals
+- **Smart Form Filling**: Uses OpenRouter AI to intelligently fill forms based on your profile
+- **Multiple AI Models**: Access to GPT-4, Claude, Llama, and more through OpenRouter
+- **PDF Processing**: Upload and automatically fill PDF forms
+- **User-Friendly Interface**: Clean, modern UI with Apple-inspired design
+- **Profile Management**: Comprehensive profile form with personal details
 - **Real-time Generation**: Instant AI-powered form filling with loading indicators
 - **Copy to Clipboard**: Easy copying of filled forms
 - **Responsive Design**: Works on desktop and mobile devices
@@ -17,7 +19,7 @@ AutoForm is a React application that uses Google Gemini Pro API to intelligently
 
 - Node.js (v16 or higher)
 - npm or yarn
-- Google Gemini Pro API key
+- OpenRouter API key (free to get!)
 
 ### Installation
 
@@ -33,10 +35,12 @@ AutoForm is a React application that uses Google Gemini Pro API to intelligently
 
 3. **Set up your API key**
    - Copy `env.example` to `.env`
-   - Get your Google Gemini Pro API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Get your OpenRouter API key from [OpenRouter](https://openrouter.ai/keys)
+   - **No credit card required!** You get free credits to start
    - Add your API key to the `.env` file:
      ```
-     VITE_GEMINI_API_KEY=your_actual_api_key_here
+     VITE_OPENROUTER_API_KEY=your_openrouter_api_key_here
+     VITE_AI_MODEL=gpt-3.5-turbo
      ```
 
 4. **Start the development server**
@@ -54,10 +58,9 @@ AutoForm is a React application that uses Google Gemini Pro API to intelligently
    - Add your education, experience, skills, and goals
    - The more detailed your profile, the better the AI can fill your forms
 
-2. **Paste your form** (left panel):
-   - Paste any text-based form with placeholders (like `___`)
-   - Use the "Load Example Form" button to see a sample
-   - The AI will replace placeholders with relevant information
+2. **Choose your method**:
+   - **Text Form**: Paste any text-based form with placeholders (like `___`)
+   - **PDF Form**: Upload a PDF form and let AI detect and fill fields
 
 3. **Generate the filled form**:
    - Click the "Generate Filled Form" button
@@ -66,13 +69,14 @@ AutoForm is a React application that uses Google Gemini Pro API to intelligently
 
 4. **Copy and use**:
    - Use the "Copy" button to copy the filled form
-   - Paste it wherever you need the completed form
+   - For PDFs, the filled file will be downloaded automatically
 
 ## 🛠️ Tech Stack
 
 - **Frontend**: React 18 with Vite
-- **Styling**: Tailwind CSS
-- **AI Integration**: Google Gemini Pro API (`@google/generative-ai`)
+- **Styling**: Tailwind CSS with Apple-inspired design
+- **AI Integration**: OpenRouter API (multiple models)
+- **PDF Processing**: pdf-lib, pdfjs-dist
 - **Build Tool**: Vite
 - **Package Manager**: npm
 
@@ -84,9 +88,11 @@ AutoForm/
 │   ├── components/
 │   │   ├── ProfileForm.jsx      # User profile input form
 │   │   ├── FormUploader.jsx     # Form text input area
-│   │   └── FilledFormOutput.jsx # AI-generated output display
+│   │   ├── FilledFormOutput.jsx # AI-generated output display
+│   │   └── PDFUploader.jsx      # PDF upload and processing
 │   ├── logic/
-│   │   └── fillFormWithGemini.js # Gemini API integration
+│   │   ├── fillFormWithOpenRouter.js # OpenRouter API integration
+│   │   └── pdfFieldDetector.js  # PDF field detection logic
 │   ├── App.jsx                  # Main application component
 │   ├── main.jsx                 # React entry point
 │   └── index.css                # Global styles
@@ -104,27 +110,36 @@ AutoForm/
 Create a `.env` file in the root directory:
 
 ```env
-VITE_GEMINI_API_KEY=your_gemini_api_key_here
+VITE_OPENROUTER_API_KEY=your_openrouter_api_key_here
+VITE_AI_MODEL=gpt-3.5-turbo
 ```
 
-### Getting a Gemini API Key
+### Getting an OpenRouter API Key
 
-1. Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Sign in with your Google account
-3. Click "Create API Key"
-4. Copy the generated key
+1. Visit [OpenRouter](https://openrouter.ai/keys)
+2. Sign up for a free account
+3. **No credit card required!** You get free credits to start
+4. Copy your API key
 5. Add it to your `.env` file
 
-## 🎨 Customization
+### Available AI Models
 
-### Styling
-The app uses Tailwind CSS. You can customize the design by modifying:
-- `src/index.css` - Global styles
-- Component files - Individual component styling
-- `tailwind.config.js` - Tailwind configuration
+You can change the AI model by setting `VITE_AI_MODEL` in your `.env` file:
 
-### AI Prompt
-Modify the prompt in `src/logic/fillFormWithGemini.js` to change how the AI fills forms.
+- `gpt-3.5-turbo` - Fast and efficient (default)
+- `gpt-4` - Most capable model
+- `claude-3-haiku` - Fast and accurate
+- `claude-3-sonnet` - Balanced performance
+- `claude-3-opus` - Most advanced
+- `llama-3.1-8b-instruct` - Open source model
+
+## 🎨 Design Features
+
+- **Apple-inspired UI**: Modern, minimalistic design
+- **Glassmorphism effects**: Translucent cards with backdrop blur
+- **Smooth animations**: Fade-in effects and hover transitions
+- **Responsive layout**: Works perfectly on all devices
+- **Professional aesthetics**: Clean typography and spacing
 
 ## 🚀 Deployment
 
@@ -161,7 +176,7 @@ If you encounter any issues:
 
 1. Check that your API key is correctly set in the `.env` file
 2. Ensure you have a stable internet connection
-3. Verify that your Gemini API key has sufficient quota
+3. Verify that your OpenRouter account has sufficient credits
 4. Check the browser console for any error messages
 
 ## 🔮 Future Enhancements
@@ -169,11 +184,20 @@ If you encounter any issues:
 - [ ] Save and load user profiles
 - [ ] Form templates library
 - [ ] Export to PDF
-- [ ] Multiple AI model support
+- [ ] Multiple AI model selection UI
 - [ ] Form validation
 - [ ] Dark mode
 - [ ] Mobile app version
+- [ ] Batch form processing
+
+## 💡 Why OpenRouter?
+
+- **No Credit Card Required**: Get started immediately with free credits
+- **Multiple AI Models**: Access to GPT-4, Claude, Llama, and more
+- **Cost Effective**: Pay only for what you use
+- **Easy Integration**: Simple API with great documentation
+- **Reliable**: Enterprise-grade infrastructure
 
 ---
 
-**Made with ❤️ using React and Google Gemini Pro** 
+**Made with ❤️ using React and OpenRouter AI** 
