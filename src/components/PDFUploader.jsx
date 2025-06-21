@@ -107,116 +107,169 @@ const PDFUploader = ({ profile, onFilledPDF }) => {
   }
 
   return (
-    <div className="bg-white rounded-lg p-6 shadow-md">
-      <h3 className="text-xl font-semibold text-gray-800 mb-4">
-        📄 PDF Form Filler
-      </h3>
-      
+    <div className="space-y-6">
       {/* Sample PDF Button */}
-      <div className="mb-4">
+      <div className="glass-card rounded-3xl p-6 hover-card">
+        <div className="flex items-center space-x-4 mb-4">
+          <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
+            <span className="text-white text-lg">📋</span>
+          </div>
+          <div>
+            <h4 className="text-lg font-bold text-gray-900">
+              Get Started
+            </h4>
+            <p className="text-gray-600 text-sm">
+              Generate a sample PDF form to test the feature
+            </p>
+          </div>
+        </div>
+        
         <button
           onClick={generateSamplePDF}
           disabled={isProcessing}
-          className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-2 px-4 rounded-lg hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm"
+          className="w-full modern-button bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-6 font-semibold disabled:opacity-50 disabled:cursor-not-allowed inverted-hover"
         >
-          📋 Generate Sample PDF Form
+          {isProcessing ? (
+            <div className="flex items-center justify-center space-x-3">
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <span>Generating...</span>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center space-x-3">
+              <span>📋</span>
+              <span>Generate Sample PDF Form</span>
+            </div>
+          )}
         </button>
       </div>
       
       {/* File Upload */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Upload PDF Form
-        </label>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".pdf"
-          onChange={handleFileUpload}
-          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-        />
-      </div>
-
-      {/* File Info */}
-      {pdfFile && (
-        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-green-800">
-                📎 {pdfFile.name}
-              </p>
-              <p className="text-xs text-green-600">
-                Size: {(pdfFile.size / 1024).toFixed(1)} KB
-              </p>
-            </div>
-            <button
-              onClick={clearFile}
-              className="text-red-500 hover:text-red-700"
-            >
-              ✕
-            </button>
+      <div className="glass-card rounded-3xl p-8 hover-card">
+        <div className="flex items-center space-x-4 mb-6">
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center shadow-lg">
+            <span className="text-white text-xl">📄</span>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-gray-900">
+              PDF Form Filler
+            </h3>
+            <p className="text-gray-600 text-sm">
+              Upload and automatically fill PDF forms with your profile data
+            </p>
           </div>
         </div>
-      )}
+        
+        <div className="space-y-6">
+          {/* File Upload */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-3">
+              Upload PDF Form
+            </label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf"
+              onChange={handleFileUpload}
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-2xl file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-blue-50 file:to-indigo-50 file:text-blue-700 hover:file:from-blue-100 hover:file:to-indigo-100 transition-all duration-300"
+            />
+          </div>
 
-      {/* Detected Fields */}
-      {detectedFields.length > 0 && (
-        <div className="mb-4">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">
-            Detected Fields ({detectedFields.length})
-          </h4>
-          <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
-            {detectedFields.map((field, index) => (
-              <div key={index} className="text-xs bg-gray-100 p-2 rounded">
-                <div className="font-medium">{field.field}</div>
-                <div className="text-gray-500">Page {field.page}</div>
+          {/* File Info */}
+          {pdfFile && (
+            <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-2xl">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-sm">📎</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-green-800">
+                      {pdfFile.name}
+                    </p>
+                    <p className="text-xs text-green-600">
+                      Size: {(pdfFile.size / 1024).toFixed(1)} KB
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={clearFile}
+                  className="text-red-500 hover:text-red-700 transition-colors"
+                >
+                  ✕
+                </button>
               </div>
-            ))}
+            </div>
+          )}
+
+          {/* Detected Fields */}
+          {detectedFields.length > 0 && (
+            <div>
+              <h4 className="text-sm font-semibold text-gray-700 mb-3">
+                Detected Fields ({detectedFields.length})
+              </h4>
+              <div className="grid grid-cols-2 gap-3 max-h-32 overflow-y-auto">
+                {detectedFields.map((field, index) => (
+                  <div key={index} className="bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200">
+                    <div className="font-medium text-sm text-gray-900">{field.field}</div>
+                    <div className="text-xs text-gray-500">Page {field.page}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Fill PDF Button */}
+          {pdfFile && detectedFields.length > 0 && (
+            <button
+              onClick={fillPDF}
+              disabled={isProcessing}
+              className="w-full modern-button bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 px-8 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed inverted-hover"
+            >
+              {isProcessing ? (
+                <div className="flex items-center justify-center space-x-3">
+                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Processing PDF...</span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center space-x-3">
+                  <span>🖊️</span>
+                  <span>Fill PDF Form</span>
+                </div>
+              )}
+            </button>
+          )}
+
+          {/* Error Message */}
+          {error && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-red-700 text-sm fade-in-up">
+              {error}
+            </div>
+          )}
+
+          {/* Instructions */}
+          <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
+            <div className="flex items-start space-x-3">
+              <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-white text-xs">💡</span>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-900 mb-2">
+                  How it works
+                </p>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li>• Generate a sample PDF form to test the feature</li>
+                  <li>• Upload a PDF form with text fields or labels</li>
+                  <li>• AI detects form fields automatically</li>
+                  <li>• Uses your profile data to fill the form</li>
+                  <li>• Downloads the filled PDF</li>
+                </ul>
+                <p className="mt-2 text-xs text-gray-500">
+                  <strong>Supported:</strong> PDF forms with text fields, labels like "Name:", "Email:", etc.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-      )}
-
-      {/* Fill PDF Button */}
-      {pdfFile && detectedFields.length > 0 && (
-        <button
-          onClick={fillPDF}
-          disabled={isProcessing}
-          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
-        >
-          {isProcessing ? (
-            <>
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Processing PDF...
-            </>
-          ) : (
-            '🖊️ Fill PDF Form'
-          )}
-        </button>
-      )}
-
-      {/* Error Message */}
-      {error && (
-        <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
-          {error}
-        </div>
-      )}
-
-      {/* Instructions */}
-      <div className="mt-4 text-xs text-gray-600">
-        <p className="mb-2"><strong>How it works:</strong></p>
-        <ul className="list-disc list-inside space-y-1">
-          <li>Generate a sample PDF form to test the feature</li>
-          <li>Upload a PDF form with text fields or labels</li>
-          <li>AI detects form fields automatically</li>
-          <li>Uses your profile data to fill the form</li>
-          <li>Downloads the filled PDF</li>
-        </ul>
-        <p className="mt-2 text-xs text-gray-500">
-          <strong>Supported:</strong> PDF forms with text fields, labels like "Name:", "Email:", etc.
-        </p>
       </div>
     </div>
   )
