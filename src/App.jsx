@@ -117,7 +117,7 @@ function App() {
                   </button>
                 </div>
               ) : (
-                <PDFUploader profile={profile} onFilledPDF={handleFilledPDF} />
+                <PDFUploader profile={profile} />
               )}
               
               {error && (
@@ -142,25 +142,20 @@ function App() {
                     <h3 className="text-2xl font-bold text-gray-900">PDF Output</h3>
                   </div>
                   
-                  {filledPDF ? (
-                    <div className="text-center success-pulse">
-                      <div className="mb-6 p-6 bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-2xl">
-                        <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <span className="text-white text-2xl">✅</span>
-                        </div>
-                        <p className="text-green-800 font-semibold text-lg mb-2">PDF Successfully Generated!</p>
-                        <p className="text-green-600 text-sm">{filledPDF.filename}</p>
-                      </div>
-                      <p className="text-gray-600">The filled PDF has been downloaded to your device.</p>
+                  <div className="text-center py-12">
+                    <div className="w-20 h-20 bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <span className="text-gray-400 text-2xl">📄</span>
                     </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <div className="w-20 h-20 bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                        <span className="text-gray-400 text-2xl">📄</span>
-                      </div>
-                      <p className="text-gray-500 text-lg">Upload a PDF form and fill it to see the result here.</p>
+                    <p className="text-gray-500 text-lg mb-4">Upload a PDF form and fill it to download the result.</p>
+                    <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
+                      <p className="text-sm text-gray-600">
+                        <strong>How it works:</strong><br/>
+                        • Upload any PDF with form fields or labels<br/>
+                        • AI automatically detects where to place your info<br/>
+                        • Downloads a filled copy instantly
+                      </p>
                     </div>
-                  )}
+                  </div>
                 </div>
               )}
             </div>
